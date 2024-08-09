@@ -1,14 +1,15 @@
 <?php
-if(isset($message)){
-   foreach($message as $message){
-      echo '
-      <div class="message">
-         <span>'.$message.'</span>
-         <i class="fas fa-times" onclick="this.parentElement.remove();"></i>
-      </div>
-      ';
-   }
+include 'config.php';
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
 }
+
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['status' => 'error', 'message' => 'User not logged in']);
+    exit;
+}
+
+
 ?>
 
 <header class="header">
@@ -35,6 +36,8 @@ if(isset($message)){
             <a href="shop.php">shop</a>
             <a href="contact.php">contact</a>
             <a href="orders.php">orders</a>
+            <a href="mytransaction.php">my transaction</a>
+            <a href="listreview.php">my review</a>
          </nav>
 
          <div class="icons">

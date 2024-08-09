@@ -22,9 +22,16 @@ if(!isset($admin_id)){
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <script src="https://cdn.anychart.com/releases/8.11.1/js/anychart-core.min.js"></script>
+   <script src="https://cdn.anychart.com/releases/8.11.1/js/anychart-pie.min.js"></script>
 
    <!-- custom admin css file link  -->
    <link rel="stylesheet" href="css/admin_style.css">
+   <style>
+      #container { 
+        width: 100%; height: 40rem; margin: 0; padding: 0; 
+      } 
+   </style>
 
 </head>
 <body>
@@ -129,7 +136,9 @@ if(!isset($admin_id)){
 
 <!-- admin dashboard section ends -->
 
+<div id="container">
 
+</div>
 
 
 
@@ -139,6 +148,38 @@ if(!isset($admin_id)){
 
 <!-- custom admin js file link  -->
 <script src="js/admin_script.js"></script>
+<script>
+   anychart.onDocumentReady(function() {
+      
+      // create a pie chart with the data
+      let chart = anychart.pie();
+      chart.title("Sales History");
+      // set container id for the chart
+      chart.container("container");
+      chart.draw();
+  
+      function updateChart() {
+         fetch('fetch_sales_history.php')
+         .then(response => {
+            if (!response.ok) {
+               throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+         })
+         .then(data =>{
+            console.log('Data fetched: '. data );
+            chart.data(data);
+         })
+         .catch(error=>{
+            console.error('Error fetching data ', error);
+         });
+      }
+      updateChart();
+
+      setInterval(updateChart, 20000);
+   });
+
+</script>
 
 </body>
 </html>

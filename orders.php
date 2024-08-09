@@ -1,17 +1,15 @@
 <?php
-
 include 'config.php';
-
 session_start();
 
 $user_id = $_SESSION['user_id'];
-
 if(!isset($user_id)){
    header('location:login.php');
 }
 
 ?>
 
+<!-- HTML code -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,13 +20,11 @@ if(!isset($user_id)){
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
    <!-- custom css file link  -->
    <link rel="stylesheet" href="css/style.css">
-
 </head>
 <body>
-   
+
 <?php include 'header.php'; ?>
 
 <div class="heading">
@@ -41,11 +37,24 @@ if(!isset($user_id)){
    <h1 class="title">placed orders</h1>
 
    <div class="box-container">
+      <!-- orders will be displayed here -->
+   
 
-      <?php
-         $order_query = mysqli_query($conn, "SELECT * FROM `orders` WHERE user_id = '$user_id'") or die('query failed');
-         if(mysqli_num_rows($order_query) > 0){
-            while($fetch_orders = mysqli_fetch_assoc($order_query)){
+   <?php
+// Update order status to "complete" when payment is successful
+if(isset($_GET['payment_success'])){
+   $order_id = $_GET['order_id'];
+   $update_query = mysqli_query($conn, "UPDATE `orders` SET `payment_status` = 'completed' WHERE `id` = '$order_id'") or die('query failed');
+   if($update_query){
+      header('location:mytransactions.php');
+   }
+}
+
+// Display orders with payment status "pending"
+$order_query = mysqli_query($conn, "SELECT * FROM `orders` WHERE `user_id` = '$user_id' AND `payment_status` = 'pending'") or die('query failed');
+if(mysqli_num_rows($order_query) > 0){
+   while($fetch_orders = mysqli_fetch_assoc($order_query)){
+      // Display order details
       ?>
       <div class="box">
          <p> placed on : <span><?php echo $fetch_orders['placed_on']; ?></span> </p>
@@ -58,23 +67,16 @@ if(!isset($user_id)){
          <p> total price : <span>$<?php echo $fetch_orders['total_price']; ?>/-</span> </p>
          <p> request : <span><?php echo $fetch_orders['request']; ?></span> </p>
          <p> payment status : <span style="color:<?php if($fetch_orders['payment_status'] == 'pending'){ echo 'red'; }else{ echo 'green'; } ?>;"><?php echo $fetch_orders['payment_status']; ?></span> </p>
-         </div>
+      </div>
       <?php
-       }
-      }else{
-         echo '<p class="empty">no orders placed yet!</p>';
-      }
-      ?>
-   </div>
+   }
+} else {
+   echo '<p class="empty">no orders placed yet!</p>';
+}
+?>
+</div>
 
 </section>
-
-
-
-
-
-
-
 
 <?php include 'footer.php'; ?>
 
@@ -83,3 +85,6 @@ if(!isset($user_id)){
 
 </body>
 </html>
+
+
+

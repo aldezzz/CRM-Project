@@ -96,6 +96,7 @@ section{
    font-size: 4rem;
 }
 
+
 .btn,
 .option-btn,
 .delete-btn,
@@ -109,6 +110,7 @@ section{
    border-radius: .5rem;
    text-transform: capitalize;
 }
+
 
 .btn:hover,
 .option-btn:hover,
